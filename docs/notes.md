@@ -115,4 +115,41 @@ El resampleado uniformiza la tasa de datos, haciendo que todas las señales teng
 
 La sincronización uniformiza la línea de tiempo, garantizando que todos los datos estén perfectamente alineados en el tiempo. Por ahora podemos no usar estos archivos, ya que las etiquetas del protocolo ya están sincronizadas en el `.pkl`
 
+## 2. Ingesta y preprocesamiento de datos 
+### Exploración inicial  
+Lo que se hizo fue:
+- Cargar los datos del sujeto S2
+  ```python 
+  subject_id = "S2"
+  subject_path = f"/kaggle/input/wesad-full-dataset/WESAD/{subject_id}/{subject_id}.pkl"
+  with open(subject_path, 'rb') as file:
+    data = pickle.load(file, encoding='latin1')
+  ```
+- Explorar las claves del diccionario, dimensiones y tipos de datos 
+  ```
+  Claves del diccionario: dict_keys(['signal', 'label', 'subject'])
+  Modalidades disponibles: dict_keys(['chest', 'wrist'])
+  Modalidades RespiBAN: dict_keys(['ACC', 'ECG', 'EMG', 'EDA', 'Temp', 'Resp'])
+  Modalidades Empatica E4: dict_keys(['ACC', 'BVP', 'EDA', 'TEMP'])
+  ```
+  ```
+  Tamaño de etiqueta: (4545100,)
+  chest | ACC | shape: (4545100, 3)
+  chest | ECG | shape: (4545100, 1)
+  chest | EMG | shape: (4545100, 1)
+  chest | EDA | shape: (4545100, 1)
+  chest | Temp | shape: (4545100, 1)
+  chest | Resp | shape: (4545100, 1)
+  wrist | ACC | shape: (207776, 3)
+  wrist | BVP | shape: (415552, 1)
+  wrist | EDA | shape: (25972, 1)
+  wrist | TEMP | shape: (25972, 1)
+  ```
+
+- Visualizar una señal fisiológica
+  ![alt text](img/tempvsmuestras-S2.png)
+- Ver la distribución de etiquetas
+  ![alt text](img/etiquetas-S2.png)
+### Preprocesamiento por ventanas y la extracción de características
+
 
