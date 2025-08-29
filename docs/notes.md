@@ -151,5 +151,13 @@ Lo que se hizo fue:
 - Ver la distribución de etiquetas
   ![alt text](img/etiquetas-S2.png)
 ### Preprocesamiento por ventanas y la extracción de características
-
-
+Para esto vamos a trabajar solamente con las señales TEMP, EDA y BVP del dispositivo de muñeca por ahora.
+El flujo será más o menos el siguiente para cada señal:
+```mermaid
+  graph LR 
+    A[Dividir la señal en ventanas temporales]-->B[Extraer estádisticas features por ventana]
+    B-->C[Etiquetar cada ventana con su respectiva moda]
+    C-->D[Eliminar las ventanas con etiquetas no relevantes]
+```
+> Esto se hace ya que no se entrenan modelos con una señal larga continua, sino con puntos de **datos representativos y compactos**. 
+> Cada ventana es como una "instantánea" del estado fisiológico. Dentro de cada ventana, tomamos la etiqueta más frecuente (moda) y se la asignamos a esa ventana.
