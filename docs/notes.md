@@ -188,6 +188,7 @@ Nota: Existe un desvalance de clases.
 ![alt text](img/distribucion-clases-s2.png)
 
 **Pairplot de features por clase**
+
 ![alt text](img/pairplot-features-s2.png)
 
 EDA: Parece separar bien estrés (2) de las otras clases.
