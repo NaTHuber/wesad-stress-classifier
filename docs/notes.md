@@ -151,7 +151,7 @@ Lo que se hizo fue:
 - Ver la distribución de etiquetas
   ![alt text](img/etiquetas-S2.png)
 ### Preprocesamiento por ventanas y la extracción de características
-Para esto vamos a trabajar solamente con las señales TEMP, EDA y BVP del dispositivo de muñeca por ahora.
+Para esto vamos a trabajar solamente con las señales TEMP, EDA y BVP del dispositivo de muñeca y seguiremos unicamente con los datos asociados al sujeto 2. 
 El flujo será más o menos el siguiente para cada señal:
 ```mermaid
   graph LR 
@@ -161,3 +161,56 @@ El flujo será más o menos el siguiente para cada señal:
 ```
 > Esto se hace ya que no se entrenan modelos con una señal larga continua, sino con puntos de **datos representativos y compactos**. 
 > Cada ventana es como una "instantánea" del estado fisiológico. Dentro de cada ventana, tomamos la etiqueta más frecuente (moda) y se la asignamos a esa ventana.
+
+**Flujo completo en código**
+
+1. Cargar archivo .pkl (S2)
+2. Extraer señales y etiquetas
+3. Definir ventanas
+4. Extraer features TEMP, EDA, BVP
+5. Convertir a arrays finales
+6. Visualización exploratoria
+
+al realizar el flujo anterior en código se obtiene las siguientes features y etiquetas asociadas al sujeto 2:
+
+- **Features extraídos:** `(71, 18)`
+- **Etiquetas válidas:** `(array([1, 2, 3]), array([38, 21, 12], dtype=int64))`
+
+De la visualización exploratorio se obtiene:
+
+**Distribución de clases en las ventanas extraídas**
+
+- Clase 1 (baseline): Dominante, estado de reposo prolongado.
+- Clase 2 (estrés) y Clase 3 (diversión): Menos frecuentes.
+
+Nota: Existe un desvalance de clases. 
+
+![alt text](img/distribucion-clases-s2.png)
+
+**Pairplot de features por clase**
+![alt text](img/pairplot-features-s2.png)
+
+EDA: Parece separar bien estrés (2) de las otras clases.
+El estrés genera mayor conductancia (más sudoración), por eso sube.
+
+TEMP: Puede diferenciar baseline (1) vs diversión (3): la temperatura sube o baja levemente.
+
+BVP: Hay variabilidad, pero no se ve tan separable visualmente. Aun así puede aportar info al combinarse con otros features.
+
+Matriz de correlación
+![alt text](img/matriz-correlaciones-s2.png)
+`temp_mean` está muy correlacionado con otras estadísticas de temperatura
+
+## 3. Entrenamiento 
+Para esta sección se trabajo de acuerdo al siguiente flujo 
+```mermaid 
+  graph LR
+  A[Dividir datos en entrenamiento y prueba]--> B[Entrenar modelo base]
+  B-->C[Predicciones y evaluación]
+  C-->D[Matriz de confusión]
+```
+Se entrenó un modelo base de clasificación usando Random Forest sobre las señales de muñeca (TEMP, EDA y BVP) del sujeto 2, obteniendo los siguientes resultados: 
+
+![alt text](img/matriz-confusion-s2.png)
+
+Es decir todas las clases fueron clasificadas correctamente, con un accuracy de 100%. Estos resultados deben interpretarse con cautela ya que las muestras son muy pocas (15 muestras). Además, existe la posibilidad de un sobre ajuste. Otro punto importante es que este modelo solo ha sido entrenado únicamente con datos del sujeto dos, por lo que aún no se ha generalizado y el  modelo podría estar reconociendo el estilo personal del sujeto y no la emoción en general. 
