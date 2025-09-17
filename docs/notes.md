@@ -223,19 +223,41 @@ Se entrenó un modelo base de clasificación usando Random Forest sobre las señ
 Es decir todas las clases fueron clasificadas correctamente, con un accuracy de 100%. Estos resultados deben interpretarse con cautela ya que las muestras son muy pocas (15 muestras). Además, existe la posibilidad de un sobre ajuste. Otro punto importante es que este modelo solo ha sido entrenado únicamente con datos del sujeto dos, por lo que aún no se ha generalizado y el  modelo podría estar reconociendo el estilo personal del sujeto y no la emoción en general. 
 
 # Etapa 2. Generalización entre sujetos mediante validación LOSO.
-Esta parte del proyecto tiene como objetivo generalizar el clasificador entre sujetos distintos.
 
-- **Objetivo:** Generalizar el clasificador para diferentes sujetos. para ello se va a: 
+Esta parte del proyecto tiene como objetivo **generalizar el clasificador entre sujetos distintos**, para ello se va a: 
+
   - Incluir más sujetos en el pipeline 
   - Normalizar señales por sujeto para reducir la variabilidad fisiológica 
   - Definir evaluación tipo Leave One Subject Out (LOSO)
   - Medir la capacidad real de generalización del modelo 
 
-- **Flujo de general de trabajo:** 
+## Flujo general de trabajo
   ```mermaid
-    graph TD 
+    graph LR 
       A[1 <br> Carga y exploración multisujeto]-->B[ 2 <br> Preprocesamiento]
-      B-->C[3 <br> Normalización]
-      C-->D[4 <br> Evaluación LOSO]
-      D-->E[5 <br> Manejo de desvalance]
+      B-->C[3 <br> Normalización y Evaluación LOSO]
+      C-->D[4 <br> Manejo de desvalance]
   ```
+## 1. Carga y exploración multisujeto
+Para llevar a cabo esta parte del proyecto se trabajó en el notebook `01_Carga_Exploracion_Multisujeto.ipynb` siguiendo el siguiente proceso en código
+```mermaid
+    graph TD
+        A[1 <br> Detecta carpetas de sujetos automáticamente]-->B[ 2 <br> Cargar y contar etiquetas por sujeto]
+        B-->C[3 <br>Guardar tabla de conteos 0-7 y 1,2,3]
+        C-->D[4 <br>Graficar barras apiladas 0..7 por sujeto]
+        D-->E[5 <br>Gráfico normalizado para etiquetas 1,2,3]
+        E-->F[6 <br>Impresión de resumen por consola]
+```
+Generando así los siguientes archivos csv que sirven como la base para diagnosticar desbalance y planear el preprocesamiento.
+
+- `labels_por_sujeto_0a7.csv`: Tabla con el conteo de las label de la 0 a la 7 por sujeto y el total. 
+- `labels_por_sujeto_123.csv`: Tabla únicamnete con las labels 1, 2 y 3 y la suma de esas labels por sujeto.  
+
+Usando estos archivos se hicieron dos graficas de barras, para visualizar las distribuciones de labels por sujetos 
+
+![alt text](img/labels_por_sujeto_0a7.png)
+![alt text](img/labels_por_sujeto_123_prop.png)
+
+
+## 2. Preprocesamiento
+## 3. Normalización y Evaluación LOSO
