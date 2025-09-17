@@ -2,13 +2,13 @@
 
 Las siguientes notas son mis apuntes personales del proyecto, las cuales me ayudaron a entender, organizar, estructurar y documentar mis ideas durante el desarrollo de este.
 
-**Nombre del proyecto:** _Clasificador de niveles de estrés a partir de señales fisiológicas (Stress Level Classification API)_
+**Nombre del proyecto:** _Clasificador de estrés a partir de señales fisiológicas (Stress Classification)_
 
 **Categoría:** Salud y bienestar.
 
 **Motivación:** Caso realista, alineado con mis intereses en bienestar, cognición, bioseñales y multimodalidad.
 
-**Objetivo:** Desarrollar un sistema que clasifique el nivel de estrés de una persona (por ejemplo: bajo, medio, alto) a partir de señales fisiológicas (como frecuencia cardíaca, GSR, temperatura) usando un modelo de ML, que luego se despliegue como una **API REST** lista para producción.
+**Objetivo:** Desarrollar un sistema de machine learning capaz de detectar si una persona se encuentra en un estado de estrés o no-estrés a partir de señales fisiológicas. Se buscará generalizar entre distintos sujetos y, en una primera versión, expondrá sus predicciones mediante una API REST mínima que reciba features procesadas y devuelva la probabilidad de estrés junto con la clase predicha.
 
 **Dataset:** WESAD dataset (Wearable Stress and Affect Detection)
 
@@ -34,18 +34,24 @@ Las siguientes notas son mis apuntes personales del proyecto, las cuales me ayud
 
 - **Cita completa:** Philip Schmidt, Attila Reiss, Robert Duerichen, Claus Marberger and Kristof Van Laerhoven, "Introducing WESAD, a multimodal dataset for Wearable Stress and Affect Detection", ICMI 2018, Boulder, USA, 2018.
 
-## Componentes del proyecto 
+## Componentes generales del proyecto 
 
-```mermaid
-graph TD
-  A[1 <br> Entendiendo el dataset] --> B[ 2 <br> Ingesta y Preprocesamiento de datos]
-  B --> C[3 <br> Entrenamiento]
-  C --> D[4 <br> Construcción de una API]
-  D --> F[5 <br> Empaquetado y despliegue]
-  F --> G[6 <br> Documentación + Monitoreo básico]
-```  
+El proyecto se dividirá en etapas incrementales que permitan avanzar desde la exploración hacia un prototipo funcional:
 
-## 1. Entendiendo el dataset 
+- **Etapa 1.** Construcción de un modelo base con datos de un solo sujeto.
+
+- **Etapa 2.** Generalización entre sujetos mediante validación LOSO.
+
+- **Etapa 3.** Reencuadre del problema a una clasificación binaria (estrés vs no-estrés) y mejora de features.
+
+- **Etapa 4.** Exposición del modelo a través de una API REST mínima que reciba features procesados y devuelva probabilidad de estrés + clase.
+
+
+
+# Etapa 1. Construcción de un modelo base con datos de un solo sujeto
+
+Construcción de un modelo sencillo que use los datos de un sólo sujeto. 
+## Entendiendo el dataset 
 
 WESAD (Wearable Stress and Affect Detection) es un dataset multimodal para detectar estrés y estados afectivos a partir de datos fisiológicos recolectados con dispositivos portables.
 
@@ -115,7 +121,7 @@ El resampleado uniformiza la tasa de datos, haciendo que todas las señales teng
 
 La sincronización uniformiza la línea de tiempo, garantizando que todos los datos estén perfectamente alineados en el tiempo. Por ahora podemos no usar estos archivos, ya que las etiquetas del protocolo ya están sincronizadas en el `.pkl`
 
-## 2. Ingesta y preprocesamiento de datos 
+## Ingesta y preprocesamiento de datos 
 ### Exploración inicial  
 Lo que se hizo fue:
 - Cargar los datos del sujeto S2
@@ -202,7 +208,7 @@ Matriz de correlación
 ![alt text](img/matriz-correlaciones-s2.png)
 `temp_mean` está muy correlacionado con otras estadísticas de temperatura
 
-## 3. Entrenamiento 
+## Entrenamiento 
 Para esta sección se trabajo de acuerdo al siguiente flujo 
 ```mermaid 
   graph LR
@@ -215,3 +221,21 @@ Se entrenó un modelo base de clasificación usando Random Forest sobre las señ
 ![alt text](img/matriz-confusion-s2.png)
 
 Es decir todas las clases fueron clasificadas correctamente, con un accuracy de 100%. Estos resultados deben interpretarse con cautela ya que las muestras son muy pocas (15 muestras). Además, existe la posibilidad de un sobre ajuste. Otro punto importante es que este modelo solo ha sido entrenado únicamente con datos del sujeto dos, por lo que aún no se ha generalizado y el  modelo podría estar reconociendo el estilo personal del sujeto y no la emoción en general. 
+
+# Etapa 2. Generalización entre sujetos mediante validación LOSO.
+Esta parte del proyecto tiene como objetivo generalizar el clasificador entre sujetos distintos.
+
+- **Objetivo:** Generalizar el clasificador para diferentes sujetos. para ello se va a: 
+  - Incluir más sujetos en el pipeline 
+  - Normalizar señales por sujeto para reducir la variabilidad fisiológica 
+  - Definir evaluación tipo Leave One Subject Out (LOSO)
+  - Medir la capacidad real de generalización del modelo 
+
+- **Flujo de general de trabajo:** 
+  ```mermaid
+    graph TD 
+      A[1 <br> Carga y exploración multisujeto]-->B[ 2 <br> Preprocesamiento]
+      B-->C[3 <br> Normalización]
+      C-->D[4 <br> Evaluación LOSO]
+      D-->E[5 <br> Manejo de desvalance]
+  ```
