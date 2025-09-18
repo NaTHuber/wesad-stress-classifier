@@ -234,7 +234,7 @@ Esta parte del proyecto tiene como objetivo **generalizar el clasificador entre 
 ## Flujo general de trabajo
   ```mermaid
     graph LR 
-      A[1 <br> Carga y exploración multisujeto]-->B[ 2 <br> Preprocesamiento]
+      A[1 <br> Carga y exploración multisujeto]-->B[ 2 <br> Extracción de features multi-sujeto]
       B-->C[3 <br> Normalización y Evaluación LOSO]
       C-->D[4 <br> Manejo de desvalance]
   ```
@@ -259,5 +259,18 @@ Usando estos archivos se hicieron dos graficas de barras, para visualizar las di
 ![alt text](img/labels_por_sujeto_123_prop.png)
 
 
-## 2. Preprocesamiento
-## 3. Normalización y Evaluación LOSO
+## 2. Extracción de features multi-sujeto 
+Para la extracción de caracteristicas de todos los sujetos se trabajó en el notebook `02_Extraccion_Features_Multisujeto.ipynb` siguiendo el siguiente proceso en código: 
+
+```mermaid
+    graph TD
+        A[1 <br> Detecta carpetas de sujetos automáticamente]-->B[ 2 <br> Carga de señales por sujeto]
+        B-->C[3 <br> Ventaneo]
+        C-->D[4 <br> Asignar etiqueta a la ventana - moda]
+        D-->E[5 <br> Extraer features y almacenar si la etiqueta es 1, 2 o 3]
+        E-->F[6 <br> Construir DataFrame]
+        F-->G[7 <br> Guardar en un CSV]
+```
+Como resultado se obtuvo un dataset con un shape final de **(1105, 20)**, es decir 1105 ventanas asociadas a los 15 sujetos. Con respecto a las columnas, 18 son estadisticas de las señales (por cada señal (TEMP, EDA, BVP) se calcularon 6 estadísticas), una columnas es para identificar al sujeto y la restante es la etiqueta de su correspondiente ventana. 
+
+Los resultados se guardaron en `features_raw.csv`
