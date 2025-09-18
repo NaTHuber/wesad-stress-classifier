@@ -274,3 +274,6 @@ Para la extracción de caracteristicas de todos los sujetos se trabajó en el no
 Como resultado se obtuvo un dataset con un shape final de **(1105, 20)**, es decir 1105 ventanas asociadas a los 15 sujetos. Con respecto a las columnas, 18 son estadisticas de las señales (por cada señal (TEMP, EDA, BVP) se calcularon 6 estadísticas), una columnas es para identificar al sujeto y la restante es la etiqueta de su correspondiente ventana. 
 
 Los resultados se guardaron en `features_raw.csv`
+
+## 3. Normalización y evaluación LOSO
+Es importante normalizar ya que cada persona tiene "niveles basales" distintos (ej. EDA/temperatura). Si se normaliza por sujeto, el modelo se enfoca en cambios relativos y no en valores absolutos.
