@@ -276,4 +276,34 @@ Como resultado se obtuvo un dataset con un shape final de **(1105, 20)**, es dec
 Los resultados se guardaron en `features_raw.csv`
 
 ## 3. Normalización y evaluación LOSO
-Es importante normalizar ya que cada persona tiene "niveles basales" distintos (ej. EDA/temperatura). Si se normaliza por sujeto, el modelo se enfoca en cambios relativos y no en valores absolutos.
+Es importante normalizar ya que cada persona tiene "niveles basales" distintos (ej. EDA/temperatura). Si se normaliza por sujeto, el modelo se enfoca en cambios relativos y no en valores absolutos. El objetivo de esta sección es **validar el modelo con Leave-One-Subject-Out (LOSO)**, por lo que: 
+- Cada fold → deja un sujeto completo fuera para test.
+- Entrena con los demás.
+- Evalúa en el sujeto fuera.
+
+Al final se obtienen **métricas por sujeto, un reporte agregado y una matriz de confusión global**.
+
+Para esta parte del proceso se trabajó en el script `03_Normalizacion_Evaluacion_LOSO.py`, siguiendo el siguiente proceso en código: 
+
+```mermaid
+flowchart TD
+  A[features_raw.csv] --> B[Separar X, y, groups]
+  B --> C[Leave-One-Subject-Out split]
+  C --> D[Para cada fold: entrenar con N-1 sujetos, probar en 1 sujeto]
+  D --> E{Normalización?}
+  E -- global --> F[Media/std del train → aplicar a train+test]
+  E -- none --> G[Usar valores crudos]
+  E -- transductive_subject --> H[Normalizar por sujeto - optimista]
+  F --> I[RandomForestClassifier]
+  G --> I
+  H --> I
+  I --> J[Entrenar en X_train]
+  J --> K[Predecir en X_test]
+  K --> L[Calcular accuracy, F1 por sujeto]
+  K --> M[Actualizar matriz de confusión global]
+  L --> N[Guardar en loso_results.csv]
+  M --> O[Guardar matriz global: loso_confusion_matrix.png]
+  L --> P[Generar reporte agregado: loso_report.txt]
+
+```
+
