@@ -307,3 +307,13 @@ flowchart TD
 
 ```
 
+Uso del script: 
+
+```
+python 03_Normalizacion_Evaluacion_LOSO.py --input features_raw.csv --norm global --balanced yes
+```
+Las salidas del script serán tres archivos: 
+ - `loso_results.csv `: accuracy y macro-F1 por sujeto
+ - `loso_confusion_matrix.png`: matriz agregada
+ - `loso_report.txt`: resumen global
+ 
