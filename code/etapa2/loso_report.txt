@@ -1,0 +1,15 @@
+Clasification report (agregado LOSO)
+              precision    recall  f1-score   support
+
+           1     0.7726    0.8739    0.8201       587
+           2     0.7042    0.7530    0.7278       332
+           3     0.5814    0.2688    0.3676       186
+
+    accuracy                         0.7357      1105
+   macro avg     0.6861    0.6319    0.6385      1105
+weighted avg     0.7199    0.7357    0.7162      1105
+
+
+Promedios por sujeto:
+accuracy    0.736115
+f1_macro    0.590153

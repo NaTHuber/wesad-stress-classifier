@@ -316,4 +316,62 @@ Las salidas del script serán tres archivos:
  - `loso_results.csv `: accuracy y macro-F1 por sujeto
  - `loso_confusion_matrix.png`: matriz agregada
  - `loso_report.txt`: resumen global
- 
+
+### Resultados globales - Archivo `loso_report.txt`
+Del archivo `loso_report.txt` se obtiene: 
+- Accuracy global: 74%
+- Macro-F1: 0.638 (promedio de F1 por clase, equilibrando clases).
+- Promedios por sujeto:
+  - Accuracy ≈ 0.736.
+  - F1-macro ≈ 0.590.
+
+El modelo generaliza de forma razonable entre sujetos, pero no es perfecto.
+
+**Detalle por clase**
+- Clase 1 (baseline)
+  - Precision 0.77
+  - Recall 0.87
+  - F1 0.82
+
+  El modelo identifica muy bien esta clase.
+
+- Clase 2 (estrés) 
+  - Precision 0.70
+  - Recall 0.75
+  - F1 0.73
+  
+  El estrés se detecta bastante bien (3 de cada 4 ventanas de estrés se reconocen).
+
+- Clase 3 (diversión)
+  - Precision 0.58
+  - Recall 0.27
+  - F1 0.36.
+
+  Con esta clase el modelo falla mucho, solo 1 de cada 4 ventanas de diversión es detectada, y el resto se confunden con baseline o estrés.
+
+### Resultados por sujeto - Archivo `loso_results.csv`
+| Subject | N Test Samples | Accuracy | F1 Macro       |
+|---------|----------------|----------|----------------|
+| S10     | 75             | 0.7733   | 0.5683         |
+| S11     | 76             | 0.8026   | 0.6742         |
+| S13     | 75             | 0.7733   | 0.5749         |
+| S14     | 75             | 0.5333   | 0.2319         |
+| S15     | 75             | 0.9067   | 0.8570         |
+| S16     | 73             | 0.7945   | 0.7090         |
+| S17     | 75             | 0.4400   | 0.4437         |
+| S2      | 71             | 0.7324   | 0.5333         |
+| S3      | 73             | 0.6849   | 0.6975         |
+| S4      | 72             | 0.8333   | 0.6222         |
+| S5      | 73             | 0.6849   | 0.4845         |
+| S6      | 73             | 0.7397   | 0.5333         |
+| S7      | 73             | 0.7123   | 0.5169         |
+| S8      | 74             | 0.8108   | 0.6071         |
+| S9      | 72             | 0.8194   | 0.7986         |
+
+Podemos observar que: 
+- Algunos sujetos alcanzan accuracy > 0.8 y buen F1.
+- Otros caen a ~0.6 o menos. Probablemente porque su señal fisiológica es atípica o sus etiquetas están desbalanceadas.
+
+La variabilidad individual influye fuerte. El promedio de accuracy 74% indica que en general sí hay generalización, pero el F1 por sujeto (≈0.59) muestra que en algunos casos se pierde capacidad de reconocer bien todas las clases.
+
+![Matriz de confusión - LOSO ](img/loso_confusion_matrix.png)
